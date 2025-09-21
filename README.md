@@ -1,10 +1,12 @@
-[![Build Status](https://github.com/diem/bcs/workflows/CI/badge.svg)](https://github.com/diem/bcs/actions?query=workflow%3ACI)
-[![License](https://img.shields.io/badge/license-Apache-green.svg)](LICENSE)
-[![bcs on crates.io](https://img.shields.io/crates/v/bcs)](https://crates.io/crates/bcs)
-[![Documentation (latest release)](https://docs.rs/bcs/badge.svg)](https://docs.rs/bcs/)
-[![Documentation (master)](https://img.shields.io/badge/docs-master-59f)](https://diem.github.io/bcs/bcs/)
 
-## Binary Canonical Serialization (BCS)
+## `no-std` Binary Canonical Serialization (BCS)
+
+```
+Note: This is a no-std version of diem's bcs implementation.
+It still requires allocations.
+
+It is part of a Rust learning project, use it as reference if you like. But you probably don't want to use this in production.
+```
 
 BCS (formerly "Libra Canonical Serialization" or LCS) is a serialization format developed
 in the context of the [Diem](https://diem.com) blockchain.

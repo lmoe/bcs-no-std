@@ -303,17 +303,20 @@
 //! # Ok(())}
 //! ```
 
+#![no_std]
+
+extern crate alloc;
+
 mod de;
 mod error;
 mod ser;
-pub mod test_helpers;
+
+pub use de::{from_bytes, from_bytes_with_limit};
+pub use error::{Error, Result};
+pub use ser::{serialized_size, serialized_size_with_limit, to_bytes, to_bytes_with_limit};
 
 /// Variable length sequences in BCS are limited to max length of 2^31 - 1.
 pub const MAX_SEQUENCE_LENGTH: usize = (1 << 31) - 1;
 
 /// Maximal allowed depth of BCS data, counting only structs and enums.
 pub const MAX_CONTAINER_DEPTH: usize = 500;
-
-pub use de::{from_bytes, from_bytes_seed};
-pub use error::{Error, Result};
-pub use ser::{is_human_readable, serialize_into, serialized_size, to_bytes};

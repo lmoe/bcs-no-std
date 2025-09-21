@@ -1,20 +1,19 @@
 [package]
 name = "bcs"
-version = "0.1.4"
-authors = ["Diem <opensource@diem.com>"]
-description = "Binary Canonical Serialization (BCS)"
-repository = "https://github.com/diem/bcs"
-homepage = "https://diem.com"
+version = "0.1.6"
+description = "no-std Binary Canonical Serialization (BCS)"
+repository = "https://github.com/lmoe/bcs-no-std"
 readme = "README.md"
 license = "Apache-2.0"
 edition = "2018"
 
 [dependencies]
-thiserror = "1.0.37"
-serde = { version = "1.0.117", features = ["derive"] }
+thiserror-no-std = "2.0.2"
+serde = { version = "1.0.219", default-features = false, features = ["derive"] }
+log = "0.4.27"
 
 [dev-dependencies]
-criterion = "0.3.3"
+criterion = "0.3.6"
 proptest = "0.10.1"
 proptest-derive = "0.2.0"
 

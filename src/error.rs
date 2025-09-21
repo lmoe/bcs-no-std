@@ -1,62 +1,79 @@
 // Copyright (c) The Diem Core Contributors
 // SPDX-License-Identifier: Apache-2.0
+#![no_std]
 
+extern crate alloc;
+use alloc::string::String;
+use core::fmt;
+use core::fmt::{Display, Formatter};
 use serde::{de, ser};
-use std::fmt;
-use thiserror::Error;
+use serde::de::StdError;
 
-pub type Result<T, E = Error> = std::result::Result<T, E>;
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, Debug, Error, PartialEq)]
+pub type Result<T, E = Error> = core::result::Result<T, E>;
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Error {
-    #[error("unexpected end of input")]
     Eof,
-    #[error("I/O error: {0}")]
-    Io(String),
-    #[error("exceeded max sequence length: {0}")]
     ExceededMaxLen(usize),
-    #[error("exceeded max container depth while entering: {0}")]
     ExceededContainerDepthLimit(&'static str),
-    #[error("expected boolean")]
     ExpectedBoolean,
-    #[error("expected map key")]
     ExpectedMapKey,
-    #[error("expected map value")]
     ExpectedMapValue,
-    #[error("keys of serialized maps must be unique and in increasing order")]
     NonCanonicalMap,
-    #[error("expected option type")]
     ExpectedOption,
-    #[error("{0}")]
     Custom(String),
-    #[error("sequence missing length")]
     MissingLen,
-    #[error("not supported: {0}")]
     NotSupported(&'static str),
-    #[error("remaining input")]
-    RemainingInput,
-    #[error("malformed utf8")]
+    RemainingInput(u64),
     Utf8,
-    #[error("ULEB128 encoding was not minimal in size")]
     NonCanonicalUleb128Encoding,
-    #[error("ULEB128-encoded integer did not fit in the target size")]
     IntegerOverflowDuringUleb128Decoding,
+    BufferFull,
 }
 
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Self {
-        Error::Io(err.to_string())
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::Eof => write!(f, "unexpected end of input"),
+            Error::ExceededMaxLen(len) => write!(f, "exceeded max sequence length: {}", len),
+            Error::ExceededContainerDepthLimit(name) => {
+                write!(f, "exceeded max container depth while entering: {}", name)
+            }
+            Error::ExpectedBoolean => write!(f, "expected boolean"),
+            Error::ExpectedMapKey => write!(f, "expected map key"),
+            Error::ExpectedMapValue => write!(f, "expected map value"),
+            Error::NonCanonicalMap => {
+                write!(f, "keys of serialized maps must be unique and in increasing order")
+            }
+            Error::ExpectedOption => write!(f, "expected option type"),
+            Error::Custom(msg) => write!(f, "{}", msg),
+            Error::MissingLen => write!(f, "sequence missing length"),
+            Error::NotSupported(feature) => write!(f, "not supported: {}", feature),
+            Error::RemainingInput(size) => write!(f, "remaining input"),
+            Error::Utf8 => write!(f, "malformed utf8"),
+            Error::NonCanonicalUleb128Encoding => {
+                write!(f, "ULEB128 encoding was not minimal in size")
+            }
+            Error::IntegerOverflowDuringUleb128Decoding => {
+                write!(f, "ULEB128-encoded integer did not fit in the target size")
+            }
+            Error::BufferFull => write!(f, "output buffer is full"),
+        }
     }
 }
 
+impl StdError for Error {}
+
 impl ser::Error for Error {
     fn custom<T: fmt::Display>(msg: T) -> Self {
+        use alloc::string::ToString;
         Error::Custom(msg.to_string())
     }
 }
 
 impl de::Error for Error {
     fn custom<T: fmt::Display>(msg: T) -> Self {
+        use alloc::string::ToString;
         Error::Custom(msg.to_string())
     }
 }
