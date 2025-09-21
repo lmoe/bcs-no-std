@@ -5,7 +5,9 @@
 Note: This is a no-std version of diem's bcs implementation.
 It still requires allocations.
 
-It is part of a Rust learning project, use it as reference if you like. But you probably don't want to use this in production.
+It is part of a Rust learning project, use it as reference if you like. 
+
+But you probably don't want to use this in production.
 ```
 
 BCS (formerly "Libra Canonical Serialization" or LCS) is a serialization format developed
